@@ -1,0 +1,6 @@
+@talent360_backend_HostAddress = http://localhost:5177
+
+GET {{talent360_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
