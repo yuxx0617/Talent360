@@ -4,7 +4,7 @@
       <q-toolbar>
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
+        <q-toolbar-title> Talent 360 </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
@@ -12,9 +12,9 @@
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> Essential Links </q-item-label>
+        <q-item-label header> Talent360 Menu </q-item-label>
 
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
+        <TalentMenu v-for="item in itemList" :key="item.title" v-bind="item" />
       </q-list>
     </q-drawer>
 
@@ -26,9 +26,9 @@
 
 <script setup>
 import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import TalentMenu from 'src/components/TalentMenu.vue'
 
-const linksList = [
+const itemList = [
   {
     title: 'Docs',
     caption: 'quasar.dev',
