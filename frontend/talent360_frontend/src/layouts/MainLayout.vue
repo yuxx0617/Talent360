@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar class="bg-primary text-dark">
+      <q-toolbar class="bg-primary text-secondary">
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title> Talent 360 </q-toolbar-title>
@@ -9,7 +9,7 @@
         <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
-    <q-drawer v-model:mini="collapsed" show-if-above bordered :width="200"
+    <q-drawer v-model:mini="collapsed" show-if-above bordered :width="250"
       ><TalentMenu :menuList="menuList" :collapsed="collapsed"
     /></q-drawer>
 
@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import TalentMenu from 'components/TalentMenu.vue';
+import TalentMenu from 'components/talentMenu.vue';
 
 const menuList = [
   {
@@ -37,7 +37,18 @@ const menuList = [
       {
         label: 'Components',
         icon: 'user-tie',
-        link: 'https://quasar.dev/components',
+        children: [
+          {
+            label: 'API',
+            icon: 'user-tie',
+            link: 'https://quasar.dev/docs/api',
+          },
+          {
+            label: 'Components',
+            icon: 'user-tie',
+            link: 'https://quasar.dev/components',
+          },
+        ],
       },
     ],
   },
