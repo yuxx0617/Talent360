@@ -2,11 +2,8 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar class="bg-primary text-secondary">
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-
+        <q-btn flat dense round icon="menu" aria-label="Menu" @click="isOpenDrawer" />
         <q-toolbar-title> Talent 360 </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
     <q-drawer v-model:mini="collapsed" show-if-above bordered :width="250"
@@ -61,7 +58,7 @@ const menuList = [
 
 const collapsed = ref(false);
 
-function toggleLeftDrawer() {
+function isOpenDrawer() {
   collapsed.value = !collapsed.value;
 }
 </script>
