@@ -1,3 +1,4 @@
+using talent360_backend.Dtos;
 using talent360_backend.Helpers;
 using talent360_backend.Models;
 using talent360_backend.Proxies;
@@ -35,7 +36,13 @@ public class EmployeeService(
 
     public async Task<ResultResponse<string>> Login(string account, string password)
     {
-        var validInfo = await microAdProxy.CheckIsValidEmployee(account, password);
+        // var validInfo = await microAdProxy.CheckIsValidEmployee(account, password);
+        var validInfo = new CheckIsValidEmployeeDto
+        {
+            IsValid = true,
+            EmployeeNumber = "T0001",
+            Email = "test@gmail.com",
+        };
         if (!validInfo.IsValid)
         {
             return new ResultResponse<string> { IsSuccess = false, Message = "User Is Not Valid" };
@@ -64,7 +71,22 @@ public class EmployeeService(
 
     private async Task<Guid> InsertEmployeeAndGetId(string employeeNumber, string email)
     {
-        var microAdEmployee = await microAdProxy.GetMicroAdEmployeeByEIdAndEmail(employeeNumber, email);
+        // var microAdEmployee = await microAdProxy.GetMicroAdEmployeeByEIdAndEmail(employeeNumber, email);
+        var microAdEmployee = new MapMicroAdEmployeeDto
+        {
+            EmployeeNumber = "T0002",
+            Name = "test2",
+            FullName = "test2 test2",
+            ChineseName = "測試2",
+            Email = "test2@gmail.com",
+            PhoneNumber = "0912345678",
+            JobTitle = "Product Developer",
+            JobGrade = "E3-9",
+            ManageGrade = null,
+            Location = "TP",
+            Office = "TW",
+            OnBoardDate = DateTime.Now,
+        };
         if (microAdEmployee == null) return Guid.Empty;
 
         var insertEmployee = new EmployeeModel

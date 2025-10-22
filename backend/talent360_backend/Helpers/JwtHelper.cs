@@ -6,11 +6,15 @@ using talent360_backend.Models;
 
 namespace talent360_backend.Helpers;
 
-public class JwtHelper(string secretKey, string issuer, string audience)
+public class JwtHelper(IConfiguration configuration)
 {
+    private readonly string _secretKey = configuration.GetValue<string>("Jwt:SecretKey") ?? "";
+    private readonly string? _issuer = configuration.GetValue<string>("Jwt:Issuer");
+    private readonly string? _audience = configuration.GetValue<string>("Jwt:Audience");
+
     public string GenerateToken(EmployeeModel employee)
     {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -22,8 +26,8 @@ public class JwtHelper(string secretKey, string issuer, string audience)
         };
 
         var token = new JwtSecurityToken(
-            issuer: issuer,
-            audience: audience,
+            issuer: _issuer,
+            audience: _audience,
             claims: claims,
             expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: credentials);

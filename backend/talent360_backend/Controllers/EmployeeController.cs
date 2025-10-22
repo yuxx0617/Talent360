@@ -8,17 +8,17 @@ using talent360_backend.Services.Interface;
 namespace talent360_backend.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class EmployeeController(IEmployeeService employeeService) : ControllerBase
 {
-    [HttpPost(Name = "Login")]
+    [HttpPost("Login")]
     public async Task<ActionResult<ResultResponse<string>>> Login(LoginRequest loginRequest)
     {
         var result = await employeeService.Login(loginRequest.Account, loginRequest.Password);
         return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet(Name = "GetAllEmployees")]
+    [HttpGet("GetAllEmployees")]
     public async Task<ActionResult<ResultResponse<List<EmployeeModel>>>> GetAllEmployees()
     {
         var result = await employeeService.GetAllEmployees();
