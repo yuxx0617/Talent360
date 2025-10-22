@@ -21,35 +21,45 @@
         />
       </q-card-actions>
     </q-card>
-    <mainLoading v-model="loading" />
+    <mainLoading v-model="isLoading" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive } from 'vue'; // 移除 ref 的匯入，因為 loading.value 已經由 useEmployeeApi 提供
 import mainInput from 'components/common/mainInput.vue';
 import mainBtn from 'components/common/mainBtn.vue';
 import mainLoading from 'components/common/mainLoading.vue';
 import { useRouter } from 'vue-router';
-import type { LoginInfo } from 'components/models.ts';
+import type { LoginRequest } from 'src/models/employeeModel';
+import { useEmployeeApi } from '../services/employeeApi';
 
-const loginInfo = reactive<LoginInfo>({
+const { isLoading, employeeLogin } = useEmployeeApi();
+
+const loginInfo = reactive<LoginRequest>({
   account: '',
   password: '',
 });
-
-const loading = ref(false);
 
 const router = useRouter();
 
 const onLoginClick = async () => {
   try {
-    loading.value = true;
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    loading.value = false;
-    await router.push('/announcement');
-  } catch (error) {
-    console.error('導航失敗:', error);
+    const result = await employeeLogin(loginInfo);
+
+    if (result) {
+      const loginInfo = result.data?.data;
+      const backendMessage = result.data?.message;
+      const success = result.data?.isSuccess;
+
+      console.log('JWT:', loginInfo);
+      console.log('MES:', backendMessage);
+      console.log('Sue:', success);
+
+      await router.push('/announcement');
+    }
+  } catch (e) {
+    console.error(e);
   }
 };
 </script>

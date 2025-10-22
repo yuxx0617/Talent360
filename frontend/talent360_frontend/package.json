@@ -23,6 +23,7 @@
     "@quasar/extras": "^1.16.4",
     "@vicons/ionicons5": "^0.13.0",
     "@vueuse/core": "^13.9.0",
+    "axios": "^1.12.2",
     "dayjs": "^1.11.18",
     "naive-ui": "^2.43.1",
     "quasar": "^2.16.0",

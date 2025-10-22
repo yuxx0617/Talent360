@@ -7,6 +7,7 @@
       :options="menuOptions"
       :render-label="renderMenuLabel"
       :expand-icon="expandIcon"
+      @update:value="handleRouter"
     />
   </n-space>
 </template>
@@ -19,14 +20,15 @@ import type { MenuOption } from 'naive-ui';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import type { MenuList } from 'components/models.ts';
+import type { MenuList } from 'src/models/models';
+import { useRouter } from 'vue-router';
 
 const props = defineProps<{
-  menuList: MenuList[];
+  menuData: MenuList[];
   collapsed: boolean;
 }>();
 
-// 2. 建立icon
+// 建立icon
 library.add(fas);
 
 const renderIcon = (iconName: string): (() => VNodeChild) => {
@@ -49,7 +51,7 @@ const expandIcon = (): VNodeChild => {
   });
 };
 
-// 3. 轉換資料
+// 轉換資料
 const transformToNaiveUIOptions = (items: MenuList[]): MenuOption[] => {
   if (!items || items.length === 0) {
     return [];
@@ -57,10 +59,12 @@ const transformToNaiveUIOptions = (items: MenuList[]): MenuOption[] => {
   return items.map((item) => {
     const option: MenuOption = {
       label: item.label,
-      key: item.label,
     };
     if (item.link) {
+      option.key = item.link;
       option.link = item.link;
+    } else {
+      option.key = item.label;
     }
     if (item.icon) {
       option.icon = renderIcon(item.icon);
@@ -75,16 +79,20 @@ const transformToNaiveUIOptions = (items: MenuList[]): MenuOption[] => {
 };
 
 const menuOptions = computed(() => {
-  return transformToNaiveUIOptions(props.menuList);
+  return transformToNaiveUIOptions(props.menuData);
 });
 
-function renderMenuLabel(option: MenuOption) {
-  if ('label' in option) {
-    // 使用 'label' 作為 key
-    return h('a', { href: option.link, target: '_blank' }, option.label as string);
-  }
+const router = useRouter();
+
+const renderMenuLabel = (option: MenuOption) => {
   return option.label as string;
-}
+};
+
+const handleRouter = async (key: string) => {
+  if (key) {
+    await router.push(key);
+  }
+};
 </script>
 
 <style scoped>

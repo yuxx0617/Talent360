@@ -7,7 +7,7 @@
       </q-toolbar>
     </q-header>
     <q-drawer v-model:mini="collapsed" show-if-above bordered :width="250"
-      ><TalentMenu :menuList="menuList" :collapsed="collapsed"
+      ><menuList :menuData="menuData" :collapsed="collapsed"
     /></q-drawer>
 
     <q-page-container>
@@ -18,42 +18,47 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import TalentMenu from 'components/talentMenu.vue';
+import menuList from 'components/menuList.vue';
 
-const menuList = [
+const menuData = [
   {
     label: 'For Employee',
     link: '',
     icon: 'user-tie',
     children: [
       {
-        label: 'API',
-        icon: 'user-tie',
-        link: 'https://quasar.dev/docs/api',
+        label: 'Announcement',
+        icon: 'bullhorn',
+        link: '/announcement',
       },
       {
-        label: 'Components',
-        icon: 'user-tie',
-        children: [
-          {
-            label: 'API',
-            icon: 'user-tie',
-            link: 'https://quasar.dev/docs/api',
-          },
-          {
-            label: 'Components',
-            icon: 'user-tie',
-            link: 'https://quasar.dev/components',
-          },
-        ],
+        label: 'Profile',
+        icon: 'address-card',
+        link: '/profile',
+      },
+      {
+        label: 'Event List',
+        icon: 'rectangle-list',
+        link: '/eventList',
       },
     ],
   },
-  {
-    label: 'For HR',
-    icon: 'gear',
-    link: 'https://github.com/quasarframework',
-  },
+  // {
+  //   label: 'For HR',
+  //   icon: 'gear',
+  //   children: [
+  //     {
+  //       label: 'API',
+  //       icon: 'user-tie',
+  //       link: 'https://quasar.dev/docs/api',
+  //     },
+  //     {
+  //       label: 'Components',
+  //       icon: 'user-tie',
+  //       link: 'https://quasar.dev/components',
+  //     },
+  //   ],
+  // },
 ];
 
 const collapsed = ref(false);

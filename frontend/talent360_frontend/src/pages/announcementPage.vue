@@ -3,7 +3,7 @@
     <mainCarousel />
     <q-page-section class="announcement-section">
       <h5 class="text-primary">
-        <FontAwesomeIcon icon="fa-solid fa-bullhorn" style="margin-right: 2px" />Bulletin Board
+        <FontAwesomeIcon icon="fa-solid fa-bullhorn" style="margin-right: 2px" />Announcement
       </h5>
     </q-page-section>
     <announceList :announcements="announcementData" />

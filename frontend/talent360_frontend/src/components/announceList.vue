@@ -32,7 +32,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
-import type { announceList } from 'components/models.ts';
+import type { AnnounceList } from 'src/models/models';
 import { date } from 'quasar';
 
 library.add(fas, far);
@@ -41,12 +41,12 @@ const formatDate = date.formatDate;
 
 defineProps({
   announcements: {
-    type: Array as () => announceList[],
+    type: Array as () => AnnounceList[],
     required: true,
   },
 });
 
-const isStar = (announce: announceList) => {
+const isStar = (announce: AnnounceList) => {
   announce.isStar = !announce.isStar;
 };
 const truncateContent = (content: string, maxLength: number = 60) => {
