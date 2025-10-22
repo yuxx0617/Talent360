@@ -2,7 +2,7 @@
   <q-page class="eventList">
     <q-page-section class="eventList-section">
       <h5 class="text-primary">
-        <FontAwesomeIcon icon="fa-solid fa-bullhorn" style="margin-right: 2px" />eventList
+        <FontAwesomeIcon icon="fa-solid fa-rectangle-list" style="margin-right: 2px" />eventList
       </h5>
     </q-page-section>
   </q-page>
@@ -20,7 +20,6 @@ library.add(fas);
 .eventList {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   padding: 20px;
 }

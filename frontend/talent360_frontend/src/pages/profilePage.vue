@@ -2,8 +2,12 @@
   <q-page class="profile">
     <q-page-section class="profile-section">
       <h5 class="text-primary">
-        <FontAwesomeIcon icon="fa-solid fa-bullhorn" style="margin-right: 2px" />profile
+        <FontAwesomeIcon icon="fa-solid fa-address-card" style="margin-right: 2px" />profile
       </h5>
+    </q-page-section>
+    <q-page-section class="profile-section">
+      <mainBtn label="Employee Number" color="secondary" disabled />
+      <mainBtn label="TP0161" flat disabled />
     </q-page-section>
   </q-page>
 </template>
@@ -12,16 +16,15 @@
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
+import mainBtn from 'components/common/mainBtn.vue';
 
 library.add(fas);
-
 </script>
 
 <style scoped>
 .profile {
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   padding: 20px;
 }

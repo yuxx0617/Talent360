@@ -1,5 +1,14 @@
 <template>
-  <q-btn class="mainBtn" :filled="filled" :label="label" :color="color" @click="$emit('click')">
+  <q-btn
+    class="mainBtn text-black"
+    :label="label"
+    :filled="filled"
+    :flat="flat"
+    :outline="outline"
+    :color="color"
+    :disable="disabled"
+    @click="$emit('click')"
+  >
     <template v-if="icon">
       <FontAwesomeIcon :icon="icon" />
     </template>
@@ -15,12 +24,14 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 library.add(fas);
 
 interface Button {
-  color: string;
   label: string;
-  filled?: boolean;
   icon?: string;
+  filled?: boolean;
+  flat?: boolean;
+  outline?: boolean;
+  color?: string;
+  disabled?: boolean;
 }
-
 defineProps<Button>();
 
 defineEmits(['click']);
@@ -30,5 +41,6 @@ defineEmits(['click']);
 .mainBtn {
   margin: 5px;
   padding: 10px;
+  text-transform: none !important;
 }
 </style>
