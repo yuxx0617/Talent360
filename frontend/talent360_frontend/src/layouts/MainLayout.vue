@@ -43,22 +43,28 @@ const menuData = [
       },
     ],
   },
-  // {
-  //   label: 'For HR',
-  //   icon: 'gear',
-  //   children: [
-  //     {
-  //       label: 'API',
-  //       icon: 'user-tie',
-  //       link: 'https://quasar.dev/docs/api',
-  //     },
-  //     {
-  //       label: 'Components',
-  //       icon: 'user-tie',
-  //       link: 'https://quasar.dev/components',
-  //     },
-  //   ],
-  // },
+  {
+    label: 'For HR',
+    link: '',
+    icon: 'gear',
+    children: [
+      {
+        label: 'Employee Setting',
+        icon: 'users-gear',
+        link: '/employeeSetting',
+      },
+      {
+        label: 'Organization',
+        icon: 'sitemap',
+        link: '/organization',
+      },
+      {
+        label: 'Supervisor Setting',
+        icon: 'user-shield',
+        link: '/supervisorSetting',
+      },
+    ],
+  },
 ];
 
 const collapsed = ref(false);

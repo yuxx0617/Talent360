@@ -1,9 +1,9 @@
 <template>
   <n-carousel show-arrow autoplay>
-    <img class="carousel-img" src="src\assets\images\carousel_1.jpg" />
-    <img class="carousel-img" src="src\assets\images\carousel_2.jpg" />
-    <img class="carousel-img" src="src\assets\images\carousel_3.jpg" />
-    <img class="carousel-img" src="src\assets\images\carousel_4.jpg" />
+    <img class="carousel-img" src="/src/assets/images/carousel_1.jpg" />
+    <img class="carousel-img" src="/src/assets/images/carousel_2.jpg" />
+    <img class="carousel-img" src="/src/assets/images/carousel_3.jpg" />
+    <img class="carousel-img" src="/src/assets/images/carousel_4.jpg" />
     <template #arrow="{ prev, next }">
       <div class="custom-arrow">
         <button type="button" class="custom-arrow--left" @click="prev">

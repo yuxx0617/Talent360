@@ -26,7 +26,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'; // 移除 ref 的匯入，因為 loading.value 已經由 useEmployeeApi 提供
+import { reactive, ref } from 'vue';
 import mainInput from 'components/common/mainInput.vue';
 import mainBtn from 'components/common/mainBtn.vue';
 import mainLoading from 'components/common/mainLoading.vue';
@@ -35,7 +35,13 @@ import type { LoginRequest } from 'src/models/employeeModel';
 import { useEmployeeApi } from '../services/employeeApi';
 import { authService } from '../services/auth';
 
-const { isLoading, employeeLogin } = useEmployeeApi();
+// ===== 測試模式開關（改成 false 連接真實 API）=====
+const USE_MOCK_LOGIN = true;
+const MOCK_ACCOUNT = 'admin';
+const MOCK_PASSWORD = 'admin';
+
+const { isLoading: apiLoading, employeeLogin } = useEmployeeApi();
+const isLoading = ref(false);
 
 const loginInfo = reactive<LoginRequest>({
   account: '',
@@ -45,7 +51,20 @@ const loginInfo = reactive<LoginRequest>({
 const router = useRouter();
 
 const onLoginClick = async () => {
+  // 測試模式：使用假帳密
+  if (USE_MOCK_LOGIN) {
+    if (loginInfo.account === MOCK_ACCOUNT && loginInfo.password === MOCK_PASSWORD) {
+      authService.setToken('mock-jwt-token-for-testing');
+      await router.push('/announcement');
+    } else {
+      alert('帳號或密碼錯誤（測試帳密：admin / admin）');
+    }
+    return;
+  }
+
+  // 真實 API 登入
   try {
+    isLoading.value = apiLoading.value;
     const result = await employeeLogin(loginInfo);
 
     if (result?.data?.isSuccess && result.data.data?.token) {
