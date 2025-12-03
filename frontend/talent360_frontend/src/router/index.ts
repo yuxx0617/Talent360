@@ -6,6 +6,7 @@ import {
   createWebHistory,
 } from 'vue-router';
 import routes from './routes';
+import { authService } from '../services/auth';
 
 /*
  * If not building with SSR mode, you can
@@ -31,6 +32,22 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
+  });
+
+  // 路由守衛：檢查認證狀態
+  Router.beforeEach((to, _from, next) => {
+    const requiresAuth = to.meta.requiresAuth;
+    const isAuthenticated = authService.isAuthenticated();
+
+    if (requiresAuth && !isAuthenticated) {
+      // 需要認證但未登入，重定向到登入頁
+      next('/');
+    } else if (to.path === '/' && isAuthenticated) {
+      // 已登入用戶訪問登入頁，重定向到公告頁
+      next('/announcement');
+    } else {
+      next();
+    }
   });
 
   return Router;

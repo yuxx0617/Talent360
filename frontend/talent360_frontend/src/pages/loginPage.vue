@@ -33,6 +33,7 @@ import mainLoading from 'components/common/mainLoading.vue';
 import { useRouter } from 'vue-router';
 import type { LoginRequest } from 'src/models/employeeModel';
 import { useEmployeeApi } from '../services/employeeApi';
+import { authService } from '../services/auth';
 
 const { isLoading, employeeLogin } = useEmployeeApi();
 
@@ -47,19 +48,12 @@ const onLoginClick = async () => {
   try {
     const result = await employeeLogin(loginInfo);
 
-    if (result) {
-      const loginInfo = result.data?.data;
-      const backendMessage = result.data?.message;
-      const success = result.data?.isSuccess;
-
-      console.log('JWT:', loginInfo);
-      console.log('MES:', backendMessage);
-      console.log('Sue:', success);
-
+    if (result?.data?.isSuccess && result.data.data?.token) {
+      authService.setToken(result.data.data.token);
       await router.push('/announcement');
     }
-  } catch (e) {
-    console.error(e);
+  } catch {
+    // 登入失敗時可以在這裡添加錯誤提示
   }
 };
 </script>
