@@ -55,6 +55,12 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true },
     children: [{ path: '', component: () => import('src/pages/formSettingPage.vue') }],
   },
+  {
+    path: '/formTypeSetting',
+    component: () => import('src/layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [{ path: '', component: () => import('src/pages/formTypeSettingPage.vue') }],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {

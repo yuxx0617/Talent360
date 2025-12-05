@@ -73,6 +73,11 @@ const menuData = [
         icon: 'file-lines',
         link: '/formSetting',
       },
+      {
+        label: 'Form Type Setting',
+        icon: 'sliders',
+        link: '/formTypeSetting',
+      },
     ],
   },
 ];
