@@ -68,6 +68,11 @@ const menuData = [
         icon: 'calendar-check',
         link: '/managementEventList',
       },
+      {
+        label: 'Form Setting',
+        icon: 'file-lines',
+        link: '/formSetting',
+      },
     ],
   },
 ];
