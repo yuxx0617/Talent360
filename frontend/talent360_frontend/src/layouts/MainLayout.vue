@@ -63,6 +63,11 @@ const menuData = [
         icon: 'user-shield',
         link: '/supervisorSetting',
       },
+      {
+        label: 'Management Event List',
+        icon: 'calendar-check',
+        link: '/managementEventList',
+      },
     ],
   },
 ];

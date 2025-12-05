@@ -43,6 +43,12 @@ const routes: RouteRecordRaw[] = [
     meta: { requiresAuth: true },
     children: [{ path: '', component: () => import('src/pages/supervisorSettingPage.vue') }],
   },
+  {
+    path: '/managementEventList',
+    component: () => import('src/layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [{ path: '', component: () => import('src/pages/managementEventListPage.vue') }],
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
