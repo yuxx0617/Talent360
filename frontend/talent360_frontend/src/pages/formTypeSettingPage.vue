@@ -10,174 +10,155 @@
 
     <!-- Form Type 列表 -->
     <div class="form-type-list">
-      <div v-for="(formType, index) in formTypes" :key="formType.id ?? index" class="form-type-item">
-        <span class="form-type-name">{{ formType.formTypeName }}</span>
-        <q-toggle
-          :model-value="formType.isActive"
-          color="primary"
-          @update:model-value="(val: boolean) => toggleFormTypeStatus(index, val)"
-        />
-      </div>
+      <mainListCard v-for="(formType, index) in formTypes" :key="formType.id ?? index">
+        {{ formType.formTypeName }}
+        <template #action>
+          <mainToggle
+            :model-value="formType.isActive"
+            @update:model-value="(val: boolean) => toggleFormTypeStatus(index, val)"
+          />
+        </template>
+      </mainListCard>
     </div>
 
     <!-- 建立 Form Type Dialog -->
-    <q-dialog v-model="showCreateDialog" persistent>
-      <q-card class="create-dialog">
-        <q-card-section class="dialog-header">
-          <div class="text-h6">{{ getStepTitle() }}</div>
-          <q-btn icon="close" flat round dense @click="closeCreateDialog" />
-        </q-card-section>
+    <mainDialog
+      v-model="showCreateDialog"
+      :title="getStepTitle()"
+      @close="closeCreateDialog"
+    >
+      <!-- Step 1: Form Type -->
+      <template v-if="currentStep === 'formType'">
+        <mainFormGroup label="Form Type Name">
+          <q-input v-model="newFormType.formTypeName" outlined dense placeholder="Form Type Name" />
+        </mainFormGroup>
 
-        <q-separator />
+        <mainFormGroup label="Office">
+          <q-select
+            v-model="newFormType.office"
+            :options="officeOptions"
+            outlined
+            dense
+            emit-value
+            map-options
+          />
+        </mainFormGroup>
+      </template>
 
-        <!-- Step 1: Form Type -->
-        <q-card-section v-if="currentStep === 'formType'" class="dialog-body">
-          <div class="form-group">
-            <label class="form-label">Form Type Name</label>
-            <q-input v-model="newFormType.formTypeName" outlined dense placeholder="Form Type Name" />
+      <!-- Step 2: Basic Limit -->
+      <template v-if="currentStep === 'basicLimit'">
+        <mainFormGroup label="Whom Review">
+          <div class="checkbox-group">
+            <q-checkbox v-model="newFormType.whomReview.hr" label="HR" />
+            <q-checkbox v-model="newFormType.whomReview.mainSupervisor" label="MainSupervisor" />
+            <q-checkbox v-model="newFormType.whomReview.reviewer" label="Reviewer" />
           </div>
+        </mainFormGroup>
 
-          <div class="form-group">
-            <label class="form-label">Office</label>
-            <q-select
-              v-model="newFormType.office"
-              :options="officeOptions"
-              outlined
-              dense
-              emit-value
-              map-options
-            />
+        <mainFormGroup label="Other Type Limit">
+          <div class="checkbox-group">
+            <q-checkbox v-model="newFormType.otherTypeLimit.jobTitle" label="Job Title" />
+            <q-checkbox v-model="newFormType.otherTypeLimit.jobGrade" label="Job Grade" />
+            <q-checkbox v-model="newFormType.otherTypeLimit.quarter" label="Quarter" />
           </div>
-        </q-card-section>
+        </mainFormGroup>
+      </template>
 
-        <!-- Step 2: Basic Limit -->
-        <q-card-section v-if="currentStep === 'basicLimit'" class="dialog-body">
-          <div class="form-group">
-            <label class="form-label">Whom Review</label>
-            <div class="checkbox-group">
-              <q-checkbox v-model="newFormType.whomReview.hr" label="HR" />
-              <q-checkbox v-model="newFormType.whomReview.mainSupervisor" label="MainSupervisor" />
-              <q-checkbox v-model="newFormType.whomReview.reviewer" label="Reviewer" />
-            </div>
-          </div>
+      <!-- Step 3: Other Limit -->
+      <template v-if="currentStep === 'otherLimit'">
+        <mainFormGroup v-if="newFormType.otherTypeLimit.jobTitle" label="Job Title">
+          <q-select
+            v-model="newFormType.jobTitles"
+            :options="jobTitleOptions"
+            outlined
+            dense
+            multiple
+            emit-value
+            map-options
+            use-chips
+          />
+        </mainFormGroup>
 
-          <div class="form-group">
-            <label class="form-label">Other Type Limit</label>
-            <div class="checkbox-group">
-              <q-checkbox v-model="newFormType.otherTypeLimit.jobTitle" label="Job Title" />
-              <q-checkbox v-model="newFormType.otherTypeLimit.jobGrade" label="Job Grade" />
-              <q-checkbox v-model="newFormType.otherTypeLimit.quarter" label="Quarter" />
-            </div>
-          </div>
-        </q-card-section>
+        <mainFormGroup v-if="newFormType.otherTypeLimit.jobGrade" label="Job Grade">
+          <q-select
+            v-model="newFormType.jobGrades"
+            :options="jobGradeOptions"
+            outlined
+            dense
+            multiple
+            emit-value
+            map-options
+            use-chips
+          />
+        </mainFormGroup>
 
-        <!-- Step 3: Other Limit -->
-        <q-card-section v-if="currentStep === 'otherLimit'" class="dialog-body">
-          <div v-if="newFormType.otherTypeLimit.jobTitle" class="form-group">
-            <label class="form-label">Job Title</label>
-            <q-select
-              v-model="newFormType.jobTitles"
-              :options="jobTitleOptions"
-              outlined
-              dense
-              multiple
-              emit-value
-              map-options
-              use-chips
-            />
-          </div>
+        <mainFormGroup v-if="newFormType.otherTypeLimit.quarter" label="Quarter">
+          <q-select
+            v-model="newFormType.quarters"
+            :options="quarterOptions"
+            outlined
+            dense
+            multiple
+            emit-value
+            map-options
+            use-chips
+          />
+        </mainFormGroup>
+      </template>
 
-          <div v-if="newFormType.otherTypeLimit.jobGrade" class="form-group">
-            <label class="form-label">Job Grade</label>
-            <q-select
-              v-model="newFormType.jobGrades"
-              :options="jobGradeOptions"
-              outlined
-              dense
-              multiple
-              emit-value
-              map-options
-              use-chips
-            />
-          </div>
+      <!-- Preview -->
+      <template v-if="currentStep === 'preview'">
+        <mainFormGroup label="Form Type Name">
+          <div class="preview-value">{{ newFormType.formTypeName }}</div>
+        </mainFormGroup>
 
-          <div v-if="newFormType.otherTypeLimit.quarter" class="form-group">
-            <label class="form-label">Quarter</label>
-            <q-select
-              v-model="newFormType.quarters"
-              :options="quarterOptions"
-              outlined
-              dense
-              multiple
-              emit-value
-              map-options
-              use-chips
-            />
-          </div>
-        </q-card-section>
+        <mainFormGroup label="Whom Review">
+          <div class="preview-value">{{ getWhomReviewText() }}</div>
+        </mainFormGroup>
+
+        <mainFormGroup label="Office">
+          <div class="preview-value">{{ getOfficeText() }}</div>
+        </mainFormGroup>
+
+        <mainFormGroup v-if="newFormType.jobTitles.length > 0" label="Job Title">
+          <div class="preview-value">{{ newFormType.jobTitles.join(', ') }}</div>
+        </mainFormGroup>
+
+        <mainFormGroup v-if="newFormType.jobGrades.length > 0" label="Job Grade">
+          <div class="preview-value">{{ newFormType.jobGrades.join(', ') }}</div>
+        </mainFormGroup>
+
+        <mainFormGroup v-if="newFormType.quarters.length > 0" label="Quarter">
+          <div class="preview-value">{{ newFormType.quarters.join(', ') }}</div>
+        </mainFormGroup>
+      </template>
+
+      <!-- 按鈕區 -->
+      <template #actions>
+        <!-- Step 1 -->
+        <template v-if="currentStep === 'formType'">
+          <mainBtn label="next" color="primary" filled @click="goToStep('basicLimit')" />
+        </template>
+
+        <!-- Step 2 -->
+        <template v-else-if="currentStep === 'basicLimit'">
+          <mainBtn label="back" color="primary" outline @click="goToStep('formType')" />
+          <mainBtn label="next" color="primary" filled @click="handleBasicLimitNext" />
+        </template>
+
+        <!-- Step 3 -->
+        <template v-else-if="currentStep === 'otherLimit'">
+          <mainBtn label="back" color="primary" outline @click="goToStep('basicLimit')" />
+          <mainBtn label="preview" color="primary" filled @click="goToStep('preview')" />
+        </template>
 
         <!-- Preview -->
-        <q-card-section v-if="currentStep === 'preview'" class="dialog-body">
-          <div class="preview-group">
-            <label class="preview-label">Form Type Name</label>
-            <div class="preview-value">{{ newFormType.formTypeName }}</div>
-          </div>
-
-          <div class="preview-group">
-            <label class="preview-label">Whom Review</label>
-            <div class="preview-value">{{ getWhomReviewText() }}</div>
-          </div>
-
-          <div class="preview-group">
-            <label class="preview-label">Office</label>
-            <div class="preview-value">{{ getOfficeText() }}</div>
-          </div>
-
-          <div v-if="newFormType.jobTitles.length > 0" class="preview-group">
-            <label class="preview-label">Job Title</label>
-            <div class="preview-value">{{ newFormType.jobTitles.join(', ') }}</div>
-          </div>
-
-          <div v-if="newFormType.jobGrades.length > 0" class="preview-group">
-            <label class="preview-label">Job Grade</label>
-            <div class="preview-value">{{ newFormType.jobGrades.join(', ') }}</div>
-          </div>
-
-          <div v-if="newFormType.quarters.length > 0" class="preview-group">
-            <label class="preview-label">Quarter</label>
-            <div class="preview-value">{{ newFormType.quarters.join(', ') }}</div>
-          </div>
-        </q-card-section>
-
-        <q-separator />
-
-        <!-- 按鈕區 -->
-        <q-card-actions align="right" class="dialog-actions">
-          <!-- Step 1 -->
-          <template v-if="currentStep === 'formType'">
-            <mainBtn label="next" color="primary" filled @click="goToStep('basicLimit')" />
-          </template>
-
-          <!-- Step 2 -->
-          <template v-else-if="currentStep === 'basicLimit'">
-            <mainBtn label="back" color="primary" outline @click="goToStep('formType')" />
-            <mainBtn label="next" color="primary" filled @click="handleBasicLimitNext" />
-          </template>
-
-          <!-- Step 3 -->
-          <template v-else-if="currentStep === 'otherLimit'">
-            <mainBtn label="back" color="primary" outline @click="goToStep('basicLimit')" />
-            <mainBtn label="preview" color="primary" filled @click="goToStep('preview')" />
-          </template>
-
-          <!-- Preview -->
-          <template v-else-if="currentStep === 'preview'">
-            <mainBtn label="back" color="primary" outline @click="handlePreviewBack" />
-            <mainBtn label="create" color="primary" filled @click="onCreate" />
-          </template>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+        <template v-else-if="currentStep === 'preview'">
+          <mainBtn label="back" color="primary" outline @click="handlePreviewBack" />
+          <mainBtn label="create" color="primary" filled @click="onCreate" />
+        </template>
+      </template>
+    </mainDialog>
 
     <mainLoading v-model="isLoading" />
   </div>
@@ -187,6 +168,10 @@
 import { ref, reactive, onMounted } from 'vue';
 import mainBtn from '../components/common/mainBtn.vue';
 import mainLoading from '../components/common/mainLoading.vue';
+import mainDialog from '../components/common/mainDialog.vue';
+import mainFormGroup from '../components/common/mainFormGroup.vue';
+import mainListCard from '../components/common/mainListCard.vue';
+import mainToggle from '../components/common/mainToggle.vue';
 import { useFormTypeApi } from '../services/formTypeApi';
 import type { FormTypeInfo, CreateFormTypeStep } from '../models/formTypeModel';
 
@@ -433,54 +418,6 @@ onMounted(() => {
   gap: 12px;
 }
 
-.form-type-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 20px;
-  border: 2px solid #2f3b77;
-  border-radius: 25px;
-  background-color: #fff;
-}
-
-.form-type-name {
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
-}
-
-/* Dialog */
-.create-dialog {
-  min-width: 450px;
-  max-width: 550px;
-}
-
-.dialog-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.dialog-body {
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 8px;
-  padding: 8px 16px;
-  background-color: #e8eaf6;
-  border-radius: 20px;
-  font-size: 14px;
-  color: #2f3b77;
-  text-align: center;
-}
-
 .checkbox-group {
   display: flex;
   gap: 20px;
@@ -488,30 +425,10 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
-/* 預覽樣式 */
-.preview-group {
-  margin-bottom: 16px;
-}
-
-.preview-label {
-  display: block;
-  margin-bottom: 8px;
-  padding: 8px 16px;
-  background-color: #e8eaf6;
-  border-radius: 20px;
-  font-size: 14px;
-  color: #2f3b77;
-  text-align: center;
-}
-
 .preview-value {
   padding: 10px;
   text-align: center;
   color: #333;
   font-size: 14px;
-}
-
-.dialog-actions {
-  padding: 16px;
 }
 </style>

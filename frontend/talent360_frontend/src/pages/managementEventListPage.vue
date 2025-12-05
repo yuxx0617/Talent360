@@ -43,131 +43,110 @@
     </div>
 
     <!-- 建立事件 Dialog -->
-    <q-dialog v-model="showCreateDialog" persistent>
-      <q-card class="create-dialog">
-        <q-card-section class="dialog-header">
-          <div class="text-h6">Event Info</div>
-          <q-btn icon="close" flat round dense @click="closeCreateDialog" />
-        </q-card-section>
+    <mainDialog
+      v-model="showCreateDialog"
+      title="Event Info"
+      min-width="500px"
+      max-width="600px"
+      @close="closeCreateDialog"
+    >
+      <!-- 第一頁：填寫表單 -->
+      <template v-if="currentStep === 1">
+        <mainFormGroup label="Event Name">
+          <q-input v-model="newEvent.eventName" outlined dense placeholder="Event Name" />
+        </mainFormGroup>
 
-        <q-separator />
+        <mainFormGroup label="Form">
+          <q-select
+            v-model="newEvent.formId"
+            :options="formOptions"
+            outlined
+            dense
+            emit-value
+            map-options
+            @update:model-value="onFormChange"
+          />
+        </mainFormGroup>
 
-        <!-- 第一頁：填寫表單 -->
-        <q-card-section v-if="currentStep === 1" class="dialog-body">
-          <!-- Event Name -->
-          <div class="form-group">
-            <label class="form-label">Event Name</label>
-            <q-input v-model="newEvent.eventName" outlined dense placeholder="Event Name" />
-          </div>
+        <mainFormGroup label="Form Name">
+          <div class="form-value">{{ newEvent.formName || '-' }}</div>
+        </mainFormGroup>
 
-          <!-- Form -->
-          <div class="form-group">
-            <label class="form-label">Form</label>
-            <q-select
-              v-model="newEvent.formId"
-              :options="formOptions"
-              outlined
-              dense
-              emit-value
-              map-options
-              @update:model-value="onFormChange"
-            />
-          </div>
+        <mainFormGroup label="Application Period">
+          <mainDateRange
+            :start-date="newEvent.applicationPeriod.start"
+            :end-date="newEvent.applicationPeriod.end"
+            @update:start-date="newEvent.applicationPeriod.start = $event"
+            @update:end-date="newEvent.applicationPeriod.end = $event"
+          />
+        </mainFormGroup>
 
-          <!-- Form Name (顯示) -->
-          <div class="form-group">
-            <label class="form-label">Form Name</label>
-            <div class="form-value">{{ newEvent.formName || '-' }}</div>
-          </div>
+        <mainFormGroup label="Write Form Period">
+          <mainDateRange
+            :start-date="newEvent.writeFormPeriod.start"
+            :end-date="newEvent.writeFormPeriod.end"
+            @update:start-date="newEvent.writeFormPeriod.start = $event"
+            @update:end-date="newEvent.writeFormPeriod.end = $event"
+          />
+        </mainFormGroup>
 
-          <!-- Application Period -->
-          <div class="form-group">
-            <label class="form-label">Application Period</label>
-            <div class="date-range">
-              <q-input v-model="newEvent.applicationPeriod.start" outlined dense type="date" />
-              <span class="date-separator">~</span>
-              <q-input v-model="newEvent.applicationPeriod.end" outlined dense type="date" />
-            </div>
-          </div>
+        <mainFormGroup label="HR Review Period">
+          <mainDateRange
+            :start-date="newEvent.hrReviewPeriod.start"
+            :end-date="newEvent.hrReviewPeriod.end"
+            @update:start-date="newEvent.hrReviewPeriod.start = $event"
+            @update:end-date="newEvent.hrReviewPeriod.end = $event"
+          />
+        </mainFormGroup>
 
-          <!-- Write Form Period -->
-          <div class="form-group">
-            <label class="form-label">Write Form Period</label>
-            <div class="date-range">
-              <q-input v-model="newEvent.writeFormPeriod.start" outlined dense type="date" />
-              <span class="date-separator">~</span>
-              <q-input v-model="newEvent.writeFormPeriod.end" outlined dense type="date" />
-            </div>
-          </div>
+        <mainFormGroup label="MainSupervisor Review Period">
+          <mainDateRange
+            :start-date="newEvent.mainSupervisorReviewPeriod.start"
+            :end-date="newEvent.mainSupervisorReviewPeriod.end"
+            @update:start-date="newEvent.mainSupervisorReviewPeriod.start = $event"
+            @update:end-date="newEvent.mainSupervisorReviewPeriod.end = $event"
+          />
+        </mainFormGroup>
+      </template>
 
-          <!-- HR Review Period -->
-          <div class="form-group">
-            <label class="form-label">HR Review Period</label>
-            <div class="date-range">
-              <q-input v-model="newEvent.hrReviewPeriod.start" outlined dense type="date" />
-              <span class="date-separator">~</span>
-              <q-input v-model="newEvent.hrReviewPeriod.end" outlined dense type="date" />
-            </div>
-          </div>
+      <!-- 第二頁：預覽 -->
+      <template v-if="currentStep === 2">
+        <mainFormGroup label="Event Name">
+          <div class="preview-value">{{ newEvent.eventName }}</div>
+        </mainFormGroup>
 
-          <!-- MainSupervisor Review Period -->
-          <div class="form-group">
-            <label class="form-label">MainSupervisor Review Period</label>
-            <div class="date-range">
-              <q-input v-model="newEvent.mainSupervisorReviewPeriod.start" outlined dense type="date" />
-              <span class="date-separator">~</span>
-              <q-input v-model="newEvent.mainSupervisorReviewPeriod.end" outlined dense type="date" />
-            </div>
-          </div>
-        </q-card-section>
+        <mainFormGroup label="Form">
+          <div class="preview-value">{{ newEvent.formName }}</div>
+        </mainFormGroup>
 
-        <!-- 第二頁：預覽 -->
-        <q-card-section v-if="currentStep === 2" class="dialog-body">
-          <div class="preview-group">
-            <label class="preview-label">Event Name</label>
-            <div class="preview-value">{{ newEvent.eventName }}</div>
-          </div>
+        <mainFormGroup label="Application Period">
+          <div class="preview-value">{{ formatDateRange(newEvent.applicationPeriod) }}</div>
+        </mainFormGroup>
 
-          <div class="preview-group">
-            <label class="preview-label">Form</label>
-            <div class="preview-value">{{ newEvent.formName }}</div>
-          </div>
+        <mainFormGroup label="Write Form Period">
+          <div class="preview-value">{{ formatDateRange(newEvent.writeFormPeriod) }}</div>
+        </mainFormGroup>
 
-          <div class="preview-group">
-            <label class="preview-label">Application Period</label>
-            <div class="preview-value">{{ formatDateRange(newEvent.applicationPeriod) }}</div>
-          </div>
+        <mainFormGroup label="HR Review Period">
+          <div class="preview-value">{{ formatDateRange(newEvent.hrReviewPeriod) }}</div>
+        </mainFormGroup>
 
-          <div class="preview-group">
-            <label class="preview-label">Write Form Period</label>
-            <div class="preview-value">{{ formatDateRange(newEvent.writeFormPeriod) }}</div>
-          </div>
+        <mainFormGroup label="MainSupervisor Review Period">
+          <div class="preview-value">{{ formatDateRange(newEvent.mainSupervisorReviewPeriod) }}</div>
+        </mainFormGroup>
+      </template>
 
-          <div class="preview-group">
-            <label class="preview-label">HR Review Period</label>
-            <div class="preview-value">{{ formatDateRange(newEvent.hrReviewPeriod) }}</div>
-          </div>
-
-          <div class="preview-group">
-            <label class="preview-label">MainSupervisor Review Period</label>
-            <div class="preview-value">{{ formatDateRange(newEvent.mainSupervisorReviewPeriod) }}</div>
-          </div>
-        </q-card-section>
-
-        <q-separator />
-
-        <!-- 按鈕區 -->
-        <q-card-actions align="right" class="dialog-actions">
-          <template v-if="currentStep === 1">
-            <mainBtn label="next" color="primary" filled @click="goToStep2" />
-          </template>
-          <template v-else>
-            <mainBtn label="back" color="primary" outline @click="goToStep1" />
-            <mainBtn label="create" color="primary" filled @click="onCreate" />
-          </template>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+      <!-- 按鈕區 -->
+      <template #actions>
+        <template v-if="currentStep === 1">
+          <mainBtn label="next" color="primary" filled @click="goToStep2" />
+        </template>
+        <template v-else>
+          <mainBtn label="back" color="primary" outline @click="goToStep1" />
+          <mainBtn label="create" color="primary" filled @click="onCreate" />
+        </template>
+      </template>
+    </mainDialog>
 
     <mainLoading v-model="isLoading" />
   </div>
@@ -177,6 +156,9 @@
 import { ref, reactive, onMounted } from 'vue';
 import mainBtn from '../components/common/mainBtn.vue';
 import mainLoading from '../components/common/mainLoading.vue';
+import mainDialog from '../components/common/mainDialog.vue';
+import mainFormGroup from '../components/common/mainFormGroup.vue';
+import mainDateRange from '../components/common/mainDateRange.vue';
 import { useEventManagementApi } from '../services/eventManagementApi';
 import type { EventInfo, DateRange } from '../models/eventManagementModel';
 
@@ -405,68 +387,10 @@ onMounted(() => {
   color: #333;
 }
 
-/* Dialog */
-.create-dialog {
-  min-width: 500px;
-  max-width: 600px;
-}
-
-.dialog-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.dialog-body {
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-.form-group {
-  margin-bottom: 16px;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 8px;
-  padding: 8px 16px;
-  background-color: #e8eaf6;
-  border-radius: 20px;
-  font-size: 14px;
-  color: #2f3b77;
-  text-align: center;
-}
-
 .form-value {
   padding: 10px;
   text-align: center;
   color: #333;
-}
-
-.date-range {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.date-separator {
-  color: #666;
-}
-
-/* 預覽樣式 */
-.preview-group {
-  margin-bottom: 16px;
-}
-
-.preview-label {
-  display: block;
-  margin-bottom: 8px;
-  padding: 8px 16px;
-  background-color: #e8eaf6;
-  border-radius: 20px;
-  font-size: 14px;
-  color: #2f3b77;
-  text-align: center;
 }
 
 .preview-value {
@@ -474,9 +398,5 @@ onMounted(() => {
   text-align: center;
   color: #333;
   font-size: 14px;
-}
-
-.dialog-actions {
-  padding: 16px;
 }
 </style>
